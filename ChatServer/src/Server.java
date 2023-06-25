@@ -3,7 +3,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server {
-    private ServerSocket serverSocket;
+    private final ServerSocket serverSocket;
 
     public Server(ServerSocket serverSocket) {
         this.serverSocket = serverSocket;
@@ -21,16 +21,6 @@ public class Server {
             }
         } catch (IOException e) {
             System.out.println("Problem with running server " + e.getMessage());
-        }
-    }
-
-    public void closeServer() {
-        try {
-            if (serverSocket != null) {
-                serverSocket.close();
-            }
-        } catch (IOException e) {
-            System.out.println("Problem with closing server " + e.getMessage());
         }
     }
 }

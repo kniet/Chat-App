@@ -10,6 +10,7 @@ public class UserHandler implements Runnable {
     private Socket socket;
     private BufferedReader input;
     private PrintWriter output;
+    private String name;
     public static List<UserHandler> users = new ArrayList<>();
 
     public UserHandler(Socket socket) {
@@ -17,7 +18,9 @@ public class UserHandler implements Runnable {
         try {
             this.input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             this.output = new PrintWriter(socket.getOutputStream(),true);
+            this.name = input.readLine();
             users.add(this);
+            sendMessageToAll(name + " joined the chat");
         } catch (IOException e) {
             System.out.println("Oops: " + e.getMessage());
             closeAll();
@@ -27,20 +30,43 @@ public class UserHandler implements Runnable {
     @Override
     public void run() {
         String message;
-        while (socket.isConnected()) {
-            try {
+        try {
+            while (socket.isConnected()) {
                 message = input.readLine();
-                sendMessage(message);
-            } catch (IOException e) {
-                System.out.println("Problem with sending message " + e.getMessage());
-                closeAll();
-                break;
+                if (message == null) {
+                    break;
+                }
+                sendMessage(name + ": " + message);
             }
+        } catch (IOException e) {
+            System.out.println("Error " + e.getMessage());
+            leaveChat();
+        } finally {
+            if (name != null) {
+                sendMessageToAll(name + " has left the chat");
+            }
+            leaveChat();
         }
     }
 
     private void sendMessage(String messageToSend) {
+        for (UserHandler userHandler : users) {
+            if (userHandler.equals(this)) {
+                continue;
+            }
+            userHandler.output.println(messageToSend);
+        }
+    }
 
+    private void sendMessageToAll(String messageToSend) {
+        for (UserHandler userHandler : users) {
+            userHandler.output.println(messageToSend);
+        }
+    }
+
+    public void leaveChat() {
+        users.remove(this);
+        closeAll();
     }
 
     public void closeAll() {
