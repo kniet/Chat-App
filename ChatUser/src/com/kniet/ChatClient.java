@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.Scanner;
 
 public class ChatClient {
@@ -18,9 +19,10 @@ public class ChatClient {
     public ChatClient(Socket socket) {
         this.socket = socket;
         try {
+            socket.setSoTimeout(5000);
             input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             output = new PrintWriter(socket.getOutputStream(), true);
-        } catch (Exception e) {
+        } catch (IOException e) {
         }
     }
 
@@ -47,6 +49,10 @@ public class ChatClient {
                             message = input.readLine();
                             System.out.println(message);
                         }
+                    } catch (SocketTimeoutException e) {
+                        System.out.println("Server response timeout");
+                        closeAll();
+                        System.exit(1);
                     } catch (IOException e) {
                         System.out.println("Listener error " + e.getMessage());
                         closeAll();
