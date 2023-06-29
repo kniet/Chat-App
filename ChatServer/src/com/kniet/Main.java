@@ -1,3 +1,5 @@
+package com.kniet;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 
@@ -9,7 +11,7 @@ public class Main {
             server.runServer();
 
         } catch (IOException e) {
-            System.out.println("Server exception " + e.getMessage());
+            System.out.println("com.kniet.Server exception " + e.getMessage());
         }
     }
 }

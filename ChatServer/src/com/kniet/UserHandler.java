@@ -1,3 +1,5 @@
+package com.kniet;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -40,10 +42,11 @@ public class UserHandler implements Runnable {
             }
         } catch (IOException e) {
             System.out.println("Error " + e.getMessage());
-            leaveChat();
         } finally {
             if (name != null) {
-                sendMessageToAll(name + " has left the chat");
+                synchronized (users) {
+                    sendMessageToAll(name + " has left the chat");
+                }
             }
             leaveChat();
         }
@@ -58,7 +61,7 @@ public class UserHandler implements Runnable {
         }
     }
 
-    private void sendMessageToAll(String messageToSend) {
+    private synchronized void sendMessageToAll(String messageToSend) {
         for (UserHandler userHandler : users) {
             userHandler.output.println(messageToSend);
         }
