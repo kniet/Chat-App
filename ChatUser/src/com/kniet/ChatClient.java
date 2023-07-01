@@ -16,6 +16,22 @@ public class ChatClient {
     private String name;
     private static Scanner scanner = new Scanner(System.in);
 
+    public BufferedReader getInput() {
+        return input;
+    }
+
+    public void setInput(BufferedReader input) {
+        this.input = input;
+    }
+
+    public PrintWriter getOutput() {
+        return output;
+    }
+
+    public void setOutput(PrintWriter output) {
+        this.output = output;
+    }
+
     public ChatClient(Socket socket) {
         this.socket = socket;
         try {
